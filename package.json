@@ -1,0 +1,22 @@
+{
+  "name": "simpleproxy",
+  "version": "1.0.0",
+  "description": "simpleproxy",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zyd317/simpleProxy.git"
+  },
+  "author": "yidi.zhao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zyd317/simpleProxy/issues"
+  },
+  "homepage": "https://github.com/zyd317/simpleProxy#readme"
+}
