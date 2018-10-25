@@ -10,7 +10,7 @@ let https = require('https');
 let http = require('http');
 let querystring = require('querystring');
 let zlib = require('zlib');
-let API_PROXY = require('../config/apiProxy');
+let API_PROXY = require('./apiProxy');
 
 /**
  * 接口请求代理，代理接口的地址为: `/api/:key`

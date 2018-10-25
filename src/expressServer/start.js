@@ -5,7 +5,7 @@
 let express = require('express');
 let http = require('http');
 let debug = require('debug')('genapp:server');
-let proxy = require('../src/middleware/proxy');
+let proxy = require('./proxy');
 const port = normalizePort(process.env.PORT || '3008');
 let app = express(); // express实例
 app.set('port', port);
