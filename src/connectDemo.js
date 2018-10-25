@@ -41,6 +41,4 @@ function connect(cRequest, cSocket, head) {
  * net.Server.on('connect') 开始connect服务
  * net.Server.listen 开启HTTP服务器监听连接,为 connections 启动一个 server 监听. 一个 net.Server 可以是一个 TCP 或者 一个 IPC server，这取决于它监听什么。
  */
-http.createServer((req, res)=>{
-    res.write()
-}).on('connect', connect).listen(8888, '0.0.0.0');
+http.createServer().on('connect', connect).listen(8888, '0.0.0.0');
