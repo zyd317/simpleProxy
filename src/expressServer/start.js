@@ -1,12 +1,12 @@
 /**
- * express as server
+ * use express to create HTTP server that listening to `${port}` and dealing different proxy, using express.Router()
  * @type {createApplication}
  */
 let express = require('express');
 let http = require('http');
 let debug = require('debug')('genapp:server');
 let proxy = require('./proxy');
-const port = normalizePort(process.env.PORT || '3008');
+const port = normalizePort(process.env.PORT || '3000');
 let app = express(); // express实例
 app.set('port', port);
 
