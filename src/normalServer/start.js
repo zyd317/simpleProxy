@@ -11,5 +11,9 @@ const requestListener = (req, res)=>{
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.end(`hi ::: ${JSON.stringify(urlObj)} \n`);
 };
-const server = http.createServer(requestListener);
-server.listen(3001);
+// path 1
+// const server = http.createServer(requestListener);
+// server.listen(3001);
+
+// path 2
+http.createServer().listen(3001).on('request', requestListener);
