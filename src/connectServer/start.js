@@ -1,28 +1,25 @@
 /**
- *
+ * listening to browser connect
  */
 const http = require('http');
 const net = require('net');
 const url = require('url');
 
 /**
- * onConnect
- * @param clientRequest <http.IncomingMessage> HTTP 请求，同 'request' 事件。
- * @param clientSocket <net.Socket> 服务器与客户端之间的网络 socket。
- * @param head  <Buffer> 流的第一个数据包，可能为空。
- * 获取request里需要转发的信息，使用net.connect转发到对应的sever。
+ * onConnect client -> connect -> proxy
+ * Synchronize booth sockets
  */
 function connect(clientRequest, clientSocket, head) {
+    console.log('connect start...');
     const urlObj = url.parse('http://' + clientRequest.url);
-    console.log(clientRequest)
-    console.log(clientSocket)
+    console.log('onconnect   urlObj:::' + JSON.stringify(urlObj));
     const hostname = urlObj.hostname;
     const port = Number(urlObj.port) || 443;
 
     const proxySocket = net.connect(port, hostname, ()=>{
         clientSocket.write('HTTP/1.1 200 Connection Established\r\n\r\n');
         proxySocket.write(head);
-        proxySocket.pipe(clientSocket); // socket pipe到proxySocket。浏览器发送到服务器
+        proxySocket.pipe(clientSocket);
     }).on('error', (e)=>{
         console.error('proxy error', e.message);
         console.info('proxy error', e.stack);
@@ -31,11 +28,12 @@ function connect(clientRequest, clientSocket, head) {
         console.log('proxy socket data:', data.toString());
         clientSocket.write(data);
     });
-    clientSocket.pipe(proxySocket); // proxySocket pipe到 socket。把服务器数据发送到浏览器
+    clientSocket.pipe(proxySocket);
 }
 
 function request(clientRequest, clientResponse) {
     const urlObj = url.parse(clientRequest.url);
+    console.log('onrequest   urlObj:::' + JSON.stringify(urlObj));
     const options = {
         hostname : urlObj.hostname,
         port : urlObj.port || 80,
@@ -43,22 +41,17 @@ function request(clientRequest, clientResponse) {
         method : clientRequest.method,
         headers : clientRequest.headers
     };
+    console.log(clientRequest.socket === clientResponse.socket);
     const serverRequest = http.request(options, (serverRequest)=>{
         clientResponse.writeHead(serverRequest.statusCode, serverRequest.headers);
         serverRequest.pipe(clientRequest);
     }).on('error', ()=>{
-        clientResponse.end('end');
+        clientResponse.end('error');
     });
     clientRequest.pipe(serverRequest);
 }
 
-/**
- * @param [options] IncomingMessage, ServerResponse
- * @param requestListener 自动添加到'request'事件的方法。
- * @return obj <http.Server> 继承自 net.Server.
- * net.Server.on('connect') 开始connect服务
- * net.Server.listen 开启HTTP服务器监听连接,为 connections 启动一个 server 监听. 一个 net.Server 可以是一个 TCP 或者 一个 IPC server，这取决于它监听什么。
- */
-const server = http.createServer().listen(3002);
+
+const server = http.createServer().listen(3002, '127.0.0.1');
 server.on('request', request)
     .on('connect', connect);
