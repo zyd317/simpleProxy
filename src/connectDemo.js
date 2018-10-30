@@ -1,7 +1,7 @@
 /**
- *
+ * connect demo
  */
-const http = require('http');
+const https = require('https');
 const net = require('net');
 const url = require('url');
 
@@ -46,7 +46,7 @@ function request(clientRequest, clientResponse) {
     const serverRequest = http.request(options, (serverRequest)=>{
         clientResponse.writeHead(serverRequest.statusCode, serverRequest.headers);
         serverRequest.pipe(clientRequest);
-    }).on('error', ()=>{
+    }).on('error', (error)=>{
         clientResponse.end('end');
     });
     clientRequest.pipe(serverRequest);
@@ -59,6 +59,6 @@ function request(clientRequest, clientResponse) {
  * net.Server.on('connect') 开始connect服务
  * net.Server.listen 开启HTTP服务器监听连接,为 connections 启动一个 server 监听. 一个 net.Server 可以是一个 TCP 或者 一个 IPC server，这取决于它监听什么。
  */
-const server = http.createServer().listen(3002);
+const server = https.createServer().listen(3002);
 server.on('request', request)
     .on('connect', connect);
