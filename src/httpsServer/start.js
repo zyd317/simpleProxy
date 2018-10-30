@@ -5,45 +5,43 @@ const http = require('http');
 const https = require('https');
 const net = require('net');
 const fs = require('fs');
+const url = require('url');
 
-http.createServer({
+https.createServer({
     keys: fs.readFileSync('./zyd.pem'),
     cert: fs.readFileSync('./server.crt')
 }).on('request', request)
 .on('connect', connect)
-.listen('3003')
+.listen('3003');
 
 function request(cReq, cRes) {
-    var u = url.parse(cReq.url);
+    const u = url.parse(cReq.url);
 
-    var options = {
-        hostname : u.hostname, 
+    const options = {
+        hostname : u.hostname,
         port     : u.port || 80,
-        path     : u.path,       
+        path     : u.path,
         method     : cReq.method,
         headers     : cReq.headers
     };
 
-    var pReq = http.request(options, function(pRes) {
+    const pReq = http.request(options, function(pRes) {
         cRes.writeHead(pRes.statusCode, pRes.headers);
         pRes.pipe(cRes);
     }).on('error', function(e) {
-        cRes.end();
+        cRes.end('error');
     });
-
     cReq.pipe(pReq);
 }
 
 function connect(cReq, cSock) {
-    var u = url.parse('http://' + cReq.url);
-
-    var pSock = net.connect(u.port, u.hostname, function() {
+    const u = url.parse('http://' + cReq.url);
+    const pSock = net.connect(u.port, u.hostname, function() {
         cSock.write('HTTP/1.1 200 Connection Established\r\n\r\n');
         pSock.pipe(cSock);
     }).on('error', function(e) {
-        cSock.end();
+        cSock.end('error');
     });
-
     cSock.pipe(pSock);
 }
 
